@@ -1,8 +1,9 @@
 import { extendTheme } from "@chakra-ui/react";
+// import "@fontsource-variable/open-sans";
+// import "@fontsource-variable/raleway";
+// import "@fontsource/open-sans";
+// import "@fontsource/raleway";
 
-export const theme = extendTheme({
-  fonts: {
-    heading: "var(--font-rubik)",
-    body: "var(--font-rubik)",
-  },
-});
+const theme = extendTheme({});
+
+export default theme;

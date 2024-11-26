@@ -2,24 +2,34 @@
 
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MotionText = motion(Text);
 
 const MotionButton = motion(Button);
 
-const WeddingAnnouncement = () => {
-  const audioRef = useRef(null);
+const useAudio = () => {
+  const [audio] = useState(new Audio("/bg-sound.mp3"));
+  const [playing, setPlaying] = useState(false);
+
+  const toggle = () => setPlaying(!playing);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.loop = true;
-      audio.play().catch(() => {
-        console.log("User interaction required to play audio");
-      });
-    }
+    playing ? audio.play() : audio.pause();
+  }, [playing]);
+
+  useEffect(() => {
+    audio.addEventListener("ended", () => setPlaying(false));
+    return () => {
+      audio.removeEventListener("ended", () => setPlaying(false));
+    };
   }, []);
+
+  return [playing, toggle];
+};
+
+const WeddingAnnouncement = () => {
+  const [playing, toggle] = useAudio();
 
   const slideUpVariant = {
     hidden: { opacity: 0, y: 50 },
@@ -51,33 +61,20 @@ const WeddingAnnouncement = () => {
         flex="2"
         display="flex"
         flexDirection="column"
-        backgroundImage="url('https://ik.imagekit.io/drpq5xrph/Template%20Tiffany%20&%20Jared/Desktop.jpg?updatedAt=1698223781539')"
-        backgroundSize="cover"
+        background={`linear-gradient(
+          rgba(50, 48, 48, 0.5), 
+          rgba(50, 48, 48, 0.5)
+        ), url('https://ik.imagekit.io/drpq5xrph/Template%20Tiffany%20&%20Jared/Desktop.jpg?updatedAt=1698223781539')`}
         backgroundPosition="center"
+        backgroundSize="cover"
         color="white"
         pr={5}
         position="relative"
         borderRight="8px"
-        borderColor="gray.200"
-        _before={{
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
-          zIndex: 0,
-          opacity: 0.7,
-        }}
+        borderColor="rgba(0, 0, 0, 0.24)"
       >
-        {/* Background Music */}
-        <audio id="myAudio" ref={audioRef} className="hide" src="/bg-sound.mp3">
-          Your browser does not support the audio element.
-        </audio>
-
         {/* Announcement */}
-        <Box position="relative" zIndex={1} backdropFilter="blur(4px)" p={6}>
+        <Box position="relative" zIndex={1} p={6}>
           <MotionText
             fontSize="md"
             fontWeight="bold"
@@ -132,6 +129,52 @@ const WeddingAnnouncement = () => {
             <br />— Sapardi Djoko Damono
           </MotionText>
         </Box>
+        <div className="fixed bottom-0 left-0 flex gap-2">
+          {/* <audio
+            id="myAudio"
+            ref={audioRef}
+            className="hide"
+            src="/bg-sound.mp3"
+          >
+            Your browser does not support the audio element.
+          </audio> */}
+          <Button backgroundColor="rgb(153, 122, 94)" borderRadius="full">
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 24 24"
+              color="#FFFFFF"
+              aria-hidden="true"
+              focusable="false"
+              height="1em"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ color: "rgb(255, 255, 255)" }}
+            >
+              <path fill="none" d="M0 0h24v24H0z"></path>
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+            </svg>
+          </Button>
+          <Button backgroundColor="rgb(153, 122, 94)" borderRadius="full">
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 24 24"
+              color="#FFFFFF"
+              aria-hidden="true"
+              focusable="false"
+              height="1em"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ color: "rgb(255, 255, 255)" }}
+            >
+              <path fill="none" d="M0 0h24v24H0z"></path>
+              <path d="M4.27 3 3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"></path>
+            </svg>
+          </Button>
+        </div>
       </Box>
 
       {/* Right Side */}
@@ -141,21 +184,14 @@ const WeddingAnnouncement = () => {
         justifyContent="space-evenly"
         alignItems="center"
         flexDirection="column"
-        backgroundImage="url('https://ik.imagekit.io/drpq5xrph/Template%20Tiffany%20&%20Jared/1.%20Cover.jpg?updatedAt=1698222296920')"
-        backgroundSize="cover"
+        background={`linear-gradient(
+          rgba(50, 48, 48, 0.5), 
+          rgba(50, 48, 48, 0.5)
+        ), url('https://ik.imagekit.io/drpq5xrph/Template%20Tiffany%20&%20Jared/1.%20Cover.jpg?updatedAt=1698222296920')`}
         backgroundPosition="center"
+        backgroundSize="cover"
+        padding="2rem"
         color="white"
-        pl={8}
-        _before={{
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
-          zIndex: 0,
-        }}
       >
         {/* Announcement */}
         <Box textAlign="center" zIndex={1}>
@@ -198,6 +234,7 @@ const WeddingAnnouncement = () => {
             background="#F9F7F4"
             variants={bounceVariant}
             animate="animate"
+            onClick={() => toggle()}
           >
             Open
           </MotionButton>

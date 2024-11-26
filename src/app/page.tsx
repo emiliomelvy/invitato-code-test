@@ -1,7 +1,7 @@
 // import Image from "next/image";
 // import { AspectRatio, Image } from "@chakra-ui/react";
 import "./globals.css";
-import WeddingAnnouncement from "./WeddingAnnouncement";
+import Cover from "./Cover";
 
 // interface CustomCSSProperties extends React.CSSProperties {
 //   "--image-url"?: string;
@@ -10,7 +10,7 @@ import WeddingAnnouncement from "./WeddingAnnouncement";
 export default function Home() {
   return (
     <>
-      <WeddingAnnouncement />
+      <Cover />
     </>
     // left https://ik.imagekit.io/drpq5xrph/Template%20Tiffany%20&%20Jared/1.%20Cover.jpg?updatedAt=1698222296920
     // <AspectRatio maxW="400px" ratio={4 / 3}>

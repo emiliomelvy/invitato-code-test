@@ -480,6 +480,15 @@
   position: absolute;
   width: 100%;
 }
+
+.slick-slide {
+  margin: 0 20px;
+  width: 294px !important;
+}
+
+.slick-list {
+  padding: 0 290 !important;
+}
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

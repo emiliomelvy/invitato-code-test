@@ -2,15 +2,16 @@
 
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Slide from "./Slide";
+import Opening from "./Opening";
 
 const MotionText = motion(Text);
 const MotionButton = motion(Button);
 const MotionBox = motion(Box);
 
 const useAudio = () => {
-  const [audio] = useState(new Audio("/bg-sound.mp3"));
+  const [audio] = useState<HTMLElement | null>(new Audio("/bg-sound.mp3"));
   const [playing, setPlaying] = useState(false);
 
   const toggle = () => setPlaying(!playing);
@@ -20,9 +21,9 @@ const useAudio = () => {
   }, [playing]);
 
   useEffect(() => {
-    audio.addEventListener("ended", () => setPlaying(false));
+    audio?.addEventListener("ended", () => setPlaying(false));
     return () => {
-      audio.removeEventListener("ended", () => setPlaying(false));
+      audio?.removeEventListener("ended", () => setPlaying(false));
     };
   }, []);
 
@@ -31,7 +32,14 @@ const useAudio = () => {
 
 const Cover = () => {
   const [playing, toggle] = useAudio();
-  const [isOpen, setIsOpen] = useState(false); // State for opening the slide animation
+  const [isOpen, setIsOpen] = useState(false);
+  const openingSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const handleScrollToBegin = () => {
+    if (openingSectionRef.current) {
+      openingSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const slideUpVariant = {
     hidden: { opacity: 0, y: 50 },
@@ -54,11 +62,6 @@ const Cover = () => {
     hidden: { y: 0, opacity: 1 },
     visible: { y: "-100vh", opacity: 0, transition: { duration: 1 } },
   };
-
-  // const fadeInVariant = {
-  //   hidden: { opacity: 0 },
-  //   visible: { opacity: 1, transition: { delay: 1, duration: 1 } },
-  // };
 
   return (
     <MotionBox
@@ -144,9 +147,49 @@ const Cover = () => {
             <br />— Sapardi Djoko Damono
           </MotionText>
         </Box>
-        {isOpen && (
-          <div className="fixed bottom-0 left-0 flex gap-2">
-            <Button backgroundColor="rgb(153, 122, 94)" borderRadius="full">
+      </Box>
+
+      {isOpen && (
+        <div className="fixed bottom-4 left-4 flex gap-2 z-10">
+          <Button
+            backgroundColor="rgb(153, 122, 94)"
+            borderRadius="full"
+            height="40px"
+            width="40px"
+            padding="0"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <svg
+              stroke="currentColor"
+              fill="currentColor"
+              strokeWidth="0"
+              viewBox="0 0 24 24"
+              color="#FFFFFF"
+              aria-hidden="true"
+              focusable="false"
+              height="20px"
+              width="20px"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ color: "rgb(255, 255, 255)" }}
+            >
+              <path fill="none" d="M0 0h24v24H0z"></path>
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+            </svg>
+          </Button>
+          <Button
+            backgroundColor="rgb(153, 122, 94)"
+            borderRadius="full"
+            height="40px"
+            width="40px"
+            padding="0"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            onClick={() => toggle()}
+          >
+            {playing ? (
               <svg
                 stroke="currentColor"
                 fill="currentColor"
@@ -155,64 +198,45 @@ const Cover = () => {
                 color="#FFFFFF"
                 aria-hidden="true"
                 focusable="false"
-                height="1em"
-                width="1em"
+                height="20px"
+                width="20px"
                 xmlns="http://www.w3.org/2000/svg"
                 style={{ color: "rgb(255, 255, 255)" }}
               >
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
               </svg>
-            </Button>
-            <Button
-              backgroundColor="rgb(153, 122, 94)"
-              borderRadius="full"
-              onClick={() => toggle()}
-            >
-              {playing ? (
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 24 24"
-                  color="#FFFFFF"
-                  aria-hidden="true"
-                  focusable="false"
-                  height="1em"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ color: "rgb(255, 255, 255)" }}
-                >
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
-                </svg>
-              ) : (
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 24 24"
-                  color="#FFFFFF"
-                  aria-hidden="true"
-                  focusable="false"
-                  height="1em"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ color: "rgb(255, 255, 255)" }}
-                >
-                  <path d="M4.27 3 3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"></path>
-                </svg>
-              )}
-            </Button>
-          </div>
-        )}
-      </Box>
+            ) : (
+              <svg
+                stroke="currentColor"
+                fill="currentColor"
+                strokeWidth="0"
+                viewBox="0 0 24 24"
+                color="#FFFFFF"
+                aria-hidden="true"
+                focusable="false"
+                height="20px"
+                width="20px"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ color: "rgb(255, 255, 255)" }}
+              >
+                <path d="M4.27 3 3 4.27l9 9v.28c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4v-1.73L19.73 21 21 19.73 4.27 3zM14 7h4V3h-6v5.18l2 2z"></path>
+              </svg>
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Right Side */}
       {isOpen ? (
-        <Slide isOpen={isOpen} />
+        <Box overflow="auto" flex="1.5">
+          <Slide isOpen={isOpen} onScrollToBegin={handleScrollToBegin} />
+          <Box ref={openingSectionRef}>
+            <Opening />
+          </Box>
+        </Box>
       ) : (
         <MotionBox
-          flex="1"
+          flex="1.5"
           display="flex"
           justifyContent="space-evenly"
           alignItems="center"

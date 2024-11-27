@@ -1,17 +1,25 @@
-import React, { useState } from "react";
-import { Box, Button } from "@chakra-ui/react";
+import React, { useState, forwardRef } from "react";
+import { Box, Button, BoxProps } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Slider from "react-slick";
 
-const MotionBox = motion(Box);
+interface Arrowprops {
+  onClick?: () => void;
+}
+
+const MotionBox = motion(
+  forwardRef<HTMLDivElement, BoxProps>((props, ref) => (
+    <Box ref={ref} {...props} />
+  ))
+);
 
 const slideToTopVariant = {
   hidden: { y: "10vh", opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { duration: 1 } },
 };
 
-const CustomPrevArrow = ({ onClick }) => {
+const CustomPrevArrow: React.FC<Arrowprops> = ({ onClick }) => {
   return (
     <Button
       onClick={onClick}
@@ -49,7 +57,7 @@ const CustomPrevArrow = ({ onClick }) => {
   );
 };
 
-const CustomNextArrow = ({ onClick }) => {
+const CustomNextArrow: React.FC<Arrowprops> = ({ onClick }) => {
   return (
     <Button
       onClick={onClick}
@@ -96,7 +104,6 @@ const Opening = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const sliderSettings = {
-    // infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1,
     adaptiveHeight: true,
@@ -164,7 +171,6 @@ const Opening = () => {
           the upcoming of our marriage.
         </Box>
       </MotionBox>
-      {/* Carousel Section */}
       <Box marginTop="30px" className="slider-container" paddingBottom="80px">
         <Slider {...sliderSettings}>
           {images.map((url, index) => (

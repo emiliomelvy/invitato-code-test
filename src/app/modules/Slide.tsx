@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Box, Heading, Text } from "@chakra-ui/react";
+import React, { useState, useEffect, forwardRef } from "react";
+import { Box, Heading, Text, BoxProps } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
-const MotionBox = motion(Box);
+const MotionBox = motion(
+  forwardRef<HTMLDivElement, BoxProps>((props, ref) => (
+    <Box ref={ref} {...props} />
+  ))
+);
 
 const slideToTopVariant = {
   hidden: { y: "100vh", opacity: 0 },

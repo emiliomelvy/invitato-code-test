@@ -1,31 +1,67 @@
 "use client";
 
-import { Box, Button, Heading, Text } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import {
+  Box,
+  Button,
+  Text,
+  BoxProps,
+  ButtonProps,
+  TextProps,
+  Heading,
+} from "@chakra-ui/react";
+import { motion, Variants } from "framer-motion";
+import { useEffect, useState, useRef, forwardRef } from "react";
 import Slide from "./Slide";
 import Opening from "./Opening";
 
-const MotionText = motion(Text);
-const MotionButton = motion(Button);
-const MotionBox = motion(Box);
+const MotionBox = motion(
+  forwardRef<HTMLDivElement, BoxProps>((props, ref) => (
+    <Box ref={ref} {...props} />
+  ))
+);
+const MotionButton = motion(
+  forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => (
+    <Button ref={ref} {...props} />
+  ))
+);
+const MotionText = motion(
+  forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
+    <Text ref={ref} {...props} />
+  ))
+);
+
+const MotionHeading = motion(
+  forwardRef<HTMLHeadingElement, TextProps>((props, ref) => (
+    <Heading ref={ref} {...props} />
+  ))
+);
 
 const useAudio = () => {
-  const [audio] = useState<HTMLElement | null>(new Audio("/bg-sound.mp3"));
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
 
   const toggle = () => setPlaying(!playing);
 
   useEffect(() => {
-    playing ? audio.play() : audio.pause();
-  }, [playing]);
+    setAudio(new Audio("/bg-sound.mp3"));
+  }, []);
 
   useEffect(() => {
-    audio?.addEventListener("ended", () => setPlaying(false));
+    if (playing) {
+      audio?.play();
+    } else {
+      audio?.pause();
+    }
+  }, [playing, audio]);
+
+  useEffect(() => {
+    const handleEnded = () => setPlaying(false);
+    audio?.addEventListener("ended", handleEnded);
+
     return () => {
-      audio?.removeEventListener("ended", () => setPlaying(false));
+      audio?.removeEventListener("ended", handleEnded);
     };
-  }, []);
+  }, [audio]);
 
   return [playing, toggle] as const;
 };
@@ -46,13 +82,13 @@ const Cover = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 1 } },
   };
 
-  const bounceVariant = {
-    animate: {
+  const bounceVariant: Variants = {
+    bounce: {
       y: [0, -10, 0],
       transition: {
+        duration: 1,
         repeat: Infinity,
-        repeatType: "loop",
-        duration: 2,
+        repeatType: "loop", // Ensure this matches the allowed union type
         ease: "easeInOut",
       },
     },
@@ -104,7 +140,7 @@ const Cover = () => {
           >
             WEDDING ANNOUNCEMENT
           </MotionText>
-          <Heading
+          <MotionHeading
             size="2xl"
             fontFamily="Butler"
             fontWeight="light"
@@ -116,8 +152,8 @@ const Cover = () => {
             animate="visible"
           >
             Tiffany &amp;
-          </Heading>
-          <Heading
+          </MotionHeading>
+          <MotionHeading
             size="2xl"
             mb={4}
             fontFamily="Butler"
@@ -129,7 +165,7 @@ const Cover = () => {
             animate="visible"
           >
             Jared
-          </Heading>
+          </MotionHeading>
           <MotionText
             mt={4}
             fontStyle="italic"
@@ -140,10 +176,10 @@ const Cover = () => {
             animate="visible"
             transition={{ delay: 1.2 }}
           >
-            "Aku ingin mencintaimu dengan sederhana; dengan kata yang tak sempat
-            diucapkan kayu kepada api yang menjadikannya abu. Aku ingin
+            &#34;Aku ingin mencintaimu dengan sederhana; dengan kata yang tak
+            sempat diucapkan kayu kepada api yang menjadikannya abu. Aku ingin
             mencintaimu dengan sederhana; dengan isyarat yang tak sempat
-            disampaikan awan kepada hujan yang menjadikannya tiada."
+            disampaikan awan kepada hujan yang menjadikannya tiada.&#34;
             <br />— Sapardi Djoko Damono
           </MotionText>
         </Box>
@@ -252,7 +288,6 @@ const Cover = () => {
           variants={slideToTopVariant}
           animate={isOpen ? "visible" : "hidden"}
         >
-          {/* Announcement */}
           <Box textAlign="center" zIndex={1}>
             <Text
               fontSize="md"
@@ -281,7 +316,6 @@ const Cover = () => {
             </Heading>
           </Box>
 
-          {/* Button */}
           <Box zIndex={1}>
             <MotionButton
               fontStyle="italic"
@@ -292,7 +326,7 @@ const Cover = () => {
               color="#1A1B1D"
               background="#F9F7F4"
               variants={bounceVariant}
-              animate="animate"
+              animate="bounce"
               onClick={() => {
                 setIsOpen(true);
                 toggle();
